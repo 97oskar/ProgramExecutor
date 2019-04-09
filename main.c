@@ -9,6 +9,9 @@
 #define MAXARG 20
 #define MAXLINE 200
 
+#define NRM "\x1B[0m"
+#define CYN "\x1B[36m"
+
 #include "argument_parser.c"
 
 static void execute(int argc, char *argv[]);
@@ -21,7 +24,8 @@ int main(void)
 
     while (true)
     {
-        printf("#: ");
+        printf("%s#: ", CYN);
+        printf("%s", NRM);
         if (getargs(&argc, argv, MAXARG, &eof) && argc > 0)
             execute(argc, argv);
 
@@ -40,9 +44,10 @@ static void execute(int argc, char *argv[])
     switch (pid = vfork())
     {
     case -1:
-        printf("Forking failed");
+        printf("Forking failed\n");
     case 0:
         execvp(argv[0], argv);
+        printf("Commnad not found\n");
     default:
         waitpid(pid, &status, 0);
     }
