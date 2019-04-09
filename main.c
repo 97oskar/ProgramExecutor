@@ -18,6 +18,21 @@ static void execute(int argc, char *argv[])
     printf("Can't execute\n");
 }
 
+static void execute2(int argc, char *argv[])
+{
+    pid_t pid;
+
+    switch (pid = vfork())
+    {
+    case -1:
+        printf("Fork failed");
+    case 0:
+        execvp(argv[0], argv);
+    default:
+        wait(NULL);
+    }
+}
+
 int main(void)
 {
     char *argv[MAXARG];
@@ -34,7 +49,7 @@ int main(void)
             else if (strcmp(argv[0], "set") == 0)
                 set(argc, argv);
             else
-                execute(argc, argv);
+                execute2(argc, argv);
         }
         if (eof)
             exit(EXIT_SUCCESS);
