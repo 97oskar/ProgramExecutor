@@ -14,22 +14,17 @@ extern char **environ;
 
 static void execute(int argc, char *argv[])
 {
-    execvp(argv[0], argv);
-    printf("Can't execute\n");
-}
-
-static void execute2(int argc, char *argv[])
-{
     pid_t pid;
+    int status;
 
     switch (pid = vfork())
     {
     case -1:
-        printf("Fork failed");
+        printf("Forking failed");
     case 0:
         execvp(argv[0], argv);
     default:
-        wait(NULL);
+        waitpid(pid, &status, NULL);
     }
 }
 
@@ -43,14 +38,8 @@ int main(void)
     {
         printf("#: ");
         if (getargs(&argc, argv, MAXARG, &eof) && argc > 0)
-        {
-            if (strchr(argv[0], '=') != NULL)
-                asg(argc, argv);
-            else if (strcmp(argv[0], "set") == 0)
-                set(argc, argv);
-            else
-                execute2(argc, argv);
-        }
+            execute(argc, argv);
+
         if (eof)
             exit(EXIT_SUCCESS);
     }
