@@ -4,29 +4,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
-
-extern char **environ;
-
-#include "argument_parser.c"
-#include "handle_functions.c"
+#include <sys/wait.h>
 
 #define MAXARG 20
+#define MAXLINE 200
 
-static void execute(int argc, char *argv[])
-{
-    pid_t pid;
-    int status;
+#include "argument_parser.c"
 
-    switch (pid = vfork())
-    {
-    case -1:
-        printf("Forking failed");
-    case 0:
-        execvp(argv[0], argv);
-    default:
-        waitpid(pid, &status, NULL);
-    }
-}
+static void execute(int argc, char *argv[]);
 
 int main(void)
 {
@@ -45,4 +30,20 @@ int main(void)
     }
 
     return 0;
+}
+
+static void execute(int argc, char *argv[])
+{
+    pid_t pid;
+    int status;
+
+    switch (pid = vfork())
+    {
+    case -1:
+        printf("Forking failed");
+    case 0:
+        execvp(argv[0], argv);
+    default:
+        waitpid(pid, &status, 0);
+    }
 }

@@ -1,6 +1,4 @@
 
-#define MAXLINE 200
-
 static bool getargs(int *argcp, char *argv[], int max, bool *eopf)
 {
     static char cmd[MAXLINE];
