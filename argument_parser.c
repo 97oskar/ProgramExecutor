@@ -41,6 +41,7 @@ static bool getargs(int *argcp, char *argv[], int max, bool *eopf)
             break;
         cmdp = NULL;
     }
+
     if (i >= max)
     {
         printf("Input too long - commnad ignored\n");
