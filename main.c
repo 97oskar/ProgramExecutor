@@ -32,6 +32,7 @@ int main(void)
         printf("%s", NRM);
         if (getargs(&argc, argv, MAXARG, &eof) && argc > 0)
             execute(argc, argv);
+        // benchamark(argc, argv);
 
         if (eof)
             exit(EXIT_SUCCESS);
@@ -76,16 +77,27 @@ static void execute2(int argc, char *argv[])
 static void benchamark(int argc, char *argv[])
 {
     clock_t start;
+    char *envs[3];
+    double results[3];
 
+    envs[0] = "vfork + execvp";
     start = clock();
-    execute2(argc, argv);
-    printf("[fork] Time: %f\n", ((double)(clock() - start)) / CLOCKS_PER_SEC);
+    for (int i = 0; i < 10000; i++)
+        execute(argc, argv);
+    results[0] = ((double)(clock() - start)) / CLOCKS_PER_SEC;
 
+    envs[1] = "fork + execvp";
     start = clock();
-    execute(argc, argv);
-    printf("[vfork] Time: %f\n", ((double)(clock() - start)) / CLOCKS_PER_SEC);
+    for (int i = 0; i < 10000; i++)
+        execute2(argc, argv);
+    results[1] = ((double)(clock() - start)) / CLOCKS_PER_SEC;
 
+    envs[2] = "system + execvp";
     start = clock();
-    system("sh ./random_num_gen 1000000");
-    printf("[system] Time: %f\n", ((double)(clock() - start)) / CLOCKS_PER_SEC);
+    for (int i = 0; i < 10000; i++)
+        system("./hello");
+    results[2] = ((double)(clock() - start)) / CLOCKS_PER_SEC;
+
+    for (int i = 0; i < 3; i++)
+        printf("time: %f [%s]\n", results[i], envs[i]);
 }
