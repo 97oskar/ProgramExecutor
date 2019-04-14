@@ -1,5 +1,6 @@
+#include "argument_parser.h"
 
-static bool getargs(int *argcp, char *argv[], int max, bool *eopf)
+bool getargs(int *argcp, char *argv[], int max, bool *eopf)
 {
     static char cmd[MAXLINE];
     char *cmdp;
